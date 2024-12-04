@@ -21,8 +21,6 @@ regex = re.compile("mul\((\d{1,3}),(\d{1,3})\)")
 
 # Part 1, Version 4
 total = sum(int(v.group(1)) * int(v.group(2)) for v in regex.finditer(input))
-
-
 print('Part 1 total:', total)
 
 # Part 2
@@ -35,12 +33,12 @@ do_matches = [(v.span()[0], True) for v in do_regex.finditer(input)]
 dont_regex = re.compile("don't\(\)")
 dont_matches = [(v.span()[0], False) for v in dont_regex.finditer(input)]
 
-all_matches = (v[1] for v in sorted(mul_matches + do_matches + dont_matches, key=lambda x: x[0]))
+all_matches = (v for i, v in sorted(mul_matches + do_matches + dont_matches))
 
 do_add = True
 total = 0
 for value in all_matches:
-    if type(value) is bool:
+    if isinstance(value, bool):
         do_add = value
     elif do_add:
       total += value
