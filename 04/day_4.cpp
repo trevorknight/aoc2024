@@ -1,3 +1,8 @@
+/* 
+ * $ clang++ day_4.cpp -std=c++17
+ * $ cat input.txt | ./a.out
+ */
+
 #include <functional>
 #include <iostream>
 #include <string>
