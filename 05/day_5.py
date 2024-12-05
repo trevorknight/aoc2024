@@ -8,13 +8,9 @@ for line in raw_data:
     if "|" in line:
         a, b = line.split("|")
         a, b = int(a), int(b)
-        rules.setdefault(a, set())
-        rules[a].add(b)
+        rules.setdefault(a, set()).add(b)
     if "," in line:
         updates.append([int(p) for p in line.split(",")])
-
-for k, v in rules.items():
-  rules[k] = sorted(v)
 
 def isValidUpdate(update, rules):
     seen_pages = []
