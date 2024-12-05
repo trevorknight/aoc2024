@@ -12,16 +12,19 @@ for line in raw_data:
     if "," in line:
         updates.append([int(p) for p in line.split(",")])
 
+
 def isValidUpdate(update, rules):
     seen_pages = []
     for page in update:
         must_be_after = rules.get(page, set())
         for seen_page in seen_pages:
             if seen_page in must_be_after:
-                print('Rejecting update', update, 'because', seen_page, 'is before', page)
+                print(
+                    "Rejecting update", update, "because", seen_page, "is before", page
+                )
                 return False
         seen_pages.append(page)
-    print('Update ok.')
+    print("Update ok.")
     return True
 
 
@@ -32,8 +35,8 @@ def getMiddlePage(update):
 
 total = 0
 for update in updates:
-    print('============')
-    print('Now considering update:', update)
+    print("============")
+    print("Now considering update:", update)
     if isValidUpdate(update, rules):
         total += getMiddlePage(update)
 
