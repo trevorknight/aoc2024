@@ -25,6 +25,9 @@ for line in lines:
             if running_total * value <= target:
                 new_possibilities.append(running_total * value)
                 # print("New possibility", running_total * value)
+            concat = int(str(running_total) + str(value))
+            if concat <= target:
+                new_possibilities.append(concat)
         possible_running_totals = new_possibilities
         # print('Current possible', possible_running_totals)
     if target in possible_running_totals:
