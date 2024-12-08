@@ -1,4 +1,4 @@
-with open("input.txt", "r") as f:
+with open("test.txt", "r") as f:
     raw_data = f.read().splitlines()
 
 rules = {}
@@ -28,16 +28,45 @@ def isValidUpdate(update, rules):
     return True
 
 
+def repair(update, rules):
+    print("REPAIR BEFORE", update)
+    repaired = []
+    for page in update:
+        these_must_be_after_current_page = rules.get(page, set())
+        insertion_point = len(repaired)
+        for repaired_i, repaired_page in enumerate(repaired):
+            if repaired_page in these_must_be_after_current_page:
+                print(
+                    repaired_page,
+                    "must come after",
+                    page,
+                    "i.e.",
+                    page,
+                    "must be inserted before",
+                    repaired_page,
+                )
+                insertion_point = min(insertion_point, repaired_i)
+        repaired.insert(insertion_point, page)
+    print("AFTER", repaired)
+    return repaired
+
+
 def getMiddlePage(update):
     assert len(update) % 2 == 1
     return update[len(update) // 2]
 
 
-total = 0
+total_for_correct = 0
+total_for_repaired = 0
+
 for update in updates:
     print("============")
     print("Now considering update:", update)
     if isValidUpdate(update, rules):
-        total += getMiddlePage(update)
+        total_for_correct += getMiddlePage(update)
+    else:
+        total_for_repaired += getMiddlePage(repair(update, rules))
 
-print("Total:", total)
+
+print("total_for_correct:", total_for_correct)
+print("total_for_repaired:", total_for_repaired)
