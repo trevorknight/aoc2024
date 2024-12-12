@@ -1,4 +1,5 @@
 from typing import Dict
+from collections import defaultdict
 
 
 NUM_BLINKS = 75
@@ -8,7 +9,7 @@ INPUT = [int(v) for v in "2 77706 5847 9258441 0 741 883933 12".split(" ")]
 
 stones = INPUT
 
-cache: Dict[int, Dict[int, int]] = {}
+cache: Dict[int, Dict[int, int]] = defaultdict(dict)
 # Gen #      0  1     2     3        4
 # Stones     0  1  2024 20 24  2 0 2 4
 # Cache  0: [1, 1,    1,    2,       4]
@@ -35,7 +36,7 @@ def getNumStonesAfterGens(start_value, num_gens):
     new_stones = evolveStone(start_value)
     num_descendants = sum([getNumStonesAfterGens(v, num_gens - 1) for v in new_stones])
     # print(f"New entry {start_value=} {num_gens=} in cache: {num_descendants=}")
-    cache.setdefault(start_value, {})[num_gens] = num_descendants
+    cache[start_value][num_gens] = num_descendants
     return num_descendants
 
 
