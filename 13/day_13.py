@@ -1,12 +1,9 @@
 import re
 from dataclasses import dataclass
 
-with open("input.txt", "r") as f:
-    input = f.read().splitlines()
-
-
 A_COST = 3
 B_COST = 1
+FILENAME = "input.txt"
 
 
 @dataclass
@@ -27,41 +24,33 @@ class Machine:
         return f"Machine Button A: X+{self.a.x}, Y+{self.a.y} Button B: X+{self.b.x}, Y+{self.b.y} Prize: X={self.prize.x}, Y={self.prize.y}"
 
 
-button_x_re = re.compile("X\+\d+")
-button_y_re = re.compile("Y\+\d+")
-
-
-def parseButton(line) -> Coeffs:
-    x = int(button_x_re.search(line).group()[2:])
-    y = int(button_y_re.search(line).group()[2:])
-    # print(f"Button {x=} {y=}")
+def parseLine(line, re_x, re_y) -> Coeffs:
+    x = int(re_x.search(line).group()[2:])
+    y = int(re_y.search(line).group()[2:])
     return Coeffs(x, y)
 
 
-prize_x_re = re.compile("X=\d+")
-prize_y_re = re.compile("Y=\d+")
-
-
-def parsePrize(line) -> Coeffs:
-    x = int(prize_x_re.search(line).group()[2:])
-    y = int(prize_y_re.search(line).group()[2:])
-    # print(f"Prize {x=} {y=}")
-    return Coeffs(x, y)
-
-
-machines = []
-for line in input:
-    if "Button A:" in line:
-        machine = Machine()
-        machine.a = parseButton(line)
-        continue
-    if "Button B:" in line:
-        machine.b = parseButton(line)
-        continue
-    if "Prize:" in line:
-        machine.prize = parsePrize(line)
-        machines.append(machine)
-        machine = None
+def getMachines() -> list[Machine]:
+    with open("input.txt", "r") as f:
+        input = f.read().splitlines()
+    button_x_re = re.compile("X\+\d+")
+    button_y_re = re.compile("Y\+\d+")
+    prize_x_re = re.compile("X=\d+")
+    prize_y_re = re.compile("Y=\d+")
+    machines = []
+    for line in input:
+        if "Button A:" in line:
+            machine = Machine()
+            machine.a = parseLine(line, button_x_re, button_y_re)
+            continue
+        if "Button B:" in line:
+            machine.b = parseLine(line, button_x_re, button_y_re)
+            continue
+        if "Prize:" in line:
+            machine.prize = parseLine(line, prize_x_re, prize_y_re)
+            machines.append(machine)
+            machine = None
+    return machines
 
 
 def floatCloseEnough(a: float, b: float, epsilon: float = 0.0001) -> bool:
@@ -83,8 +72,9 @@ def tryValues(A: int, B: int, machine: Machine) -> bool:
 
 def getMachineCost(m) -> int:
     if areButtonsScaledEquivalent(m):
-        print("Scaled equivalent!")
+        print("ERROR scaled equivalent!")
         print(m)
+        breakpoint()
 
     # COST = 3A + 1B
     # m.prize.x == A * m.a.x + B * m.b.x
@@ -107,8 +97,7 @@ def getMachineCost(m) -> int:
     A = round(A)
     B = round(B)
     if tryValues(A, B, m):
-        if A > 100 or B > 100:
-            print(f"Found machine", m, "with button presses", A, B)
+        print(f"Machine", m, "successful with {A=}, {B=}")
         return A_COST * A + B_COST * B
     return 0
 
@@ -121,8 +110,9 @@ def getMachineCostPart2(m) -> int:
     return getMachineCost(new_machine)
 
 
-total_cost = 0
-for machine in machines:
-    total_cost += getMachineCostPart2(machine)
-
-print("Total cost", total_cost)
+if __name__ == "__main__":
+    machines = getMachines()
+    total_cost = 0
+    for machine in machines:
+        total_cost += getMachineCostPart2(machine)
+    print("Total cost", total_cost)
